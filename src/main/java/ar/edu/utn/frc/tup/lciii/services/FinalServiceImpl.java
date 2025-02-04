@@ -138,11 +138,22 @@ public class FinalServiceImpl implements FinalService {
     }
 
     @Override
-    public List<DeviceDTO> endpointInsert() {
+    public List<EndpointDevices> endpointInsert() {
 
-        List<EndpointDevices> 
+        List<EndpointDevices> devices = restClient.getDevices();
 
+        Integer count = 0;
+        List<EndpointDevices> devicesss = new ArrayList<>();
+        for(EndpointDevices device: devices) {
+            Long randomNumber = Math.round(Math.random() * 1);
+            if(count < (devices.size() / 2)){
+                break;
+            }
+            if(randomNumber > 5){
+                devicesss.add(device);
+            }
+        }
 
-        return List.of();
+        return devicesss;
     }
 }

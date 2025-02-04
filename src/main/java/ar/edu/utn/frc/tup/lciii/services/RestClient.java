@@ -28,7 +28,7 @@ public class RestClient {
         return EndpointDevices.builder()
                 .id(((Number) devices.get("id")).longValue())
                 .hostName((String) devices.get("hostName"))
-                .createdDate((LocalDateTime) devices.get("createdDate"))
+                .createdDate((String) devices.get("createdDate"))
                 .os((String) devices.get("os"))
                 .macAddress((String) devices.get("macAddress"))
                 .type((String) devices.get("type"))

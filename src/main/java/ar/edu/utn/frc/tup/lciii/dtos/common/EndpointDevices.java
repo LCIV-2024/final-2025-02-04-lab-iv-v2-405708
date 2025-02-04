@@ -19,7 +19,7 @@ public class EndpointDevices {
 
         private String hostName;
 
-        private LocalDateTime createdDate;
+        private String createdDate;
 
         private String type;
 

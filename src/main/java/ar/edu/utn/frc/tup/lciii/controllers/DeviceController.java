@@ -42,9 +42,12 @@ public class DeviceController {
 
     @PostMapping("/save-consumed-devices")
     public ResponseEntity<List<EndpointDevices>> saveConsumedDevices() {
+        List<EndpointDevices> devices = finalService.endpointInsert();
+        if(devices == null) {
+            return ResponseEntity.badRequest().build();
+        }
 
-
-        return null;
+        return ResponseEntity.ok(devices);
     }
 
 
