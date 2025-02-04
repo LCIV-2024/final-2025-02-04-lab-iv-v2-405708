@@ -146,12 +146,14 @@ public class FinalServiceImpl implements FinalService {
         List<EndpointDevices> devicesss = new ArrayList<>();
         for(EndpointDevices device: devices) {
             Long randomNumber = Math.round(Math.random() * 1);
-            if(count < (devices.size() / 2)){
+            if(count > 5){
                 break;
             }
             if(randomNumber > 5){
                 devicesss.add(device);
+                count++;
             }
+
         }
 
         return devicesss;
