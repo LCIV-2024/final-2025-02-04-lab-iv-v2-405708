@@ -51,7 +51,7 @@ public class DeviceController {
     }
 
 
-    @GetMapping("/device?{lowThreshold}&{upThreshold}")
+    @GetMapping("/device/threshold")
     ResponseEntity<List<DeviceDTO>> getDevicesByThreshold(@RequestParam(required = true) Double lowThreshold,
                                                           @RequestParam(required = true) Double upThreshold) {
         List<DeviceDTO> deviceDTOS = finalService.getDevicesBetweenByConsumo(lowThreshold, upThreshold);

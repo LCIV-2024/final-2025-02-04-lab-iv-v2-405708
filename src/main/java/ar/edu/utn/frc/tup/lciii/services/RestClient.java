@@ -17,7 +17,7 @@ public class RestClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    String url = "https://67a106a15bcfff4fabe171b0.mockapi.io/api/v1/device/device";
+    String url = "https://67b25dc6bc0165def8cd5fdf.mockapi.io/device/device";
 
     public List<EndpointDevices> getDevices() {
         List<Map<String, Object>> response = restTemplate.getForObject(url, List.class);
@@ -26,12 +26,12 @@ public class RestClient {
 
     private EndpointDevices mapToDevices(Map<String, Object> devices) {
         return EndpointDevices.builder()
-                .id(((Number) devices.get("id")).longValue())
                 .hostName((String) devices.get("hostName"))
                 .createdDate((String) devices.get("createdDate"))
                 .os((String) devices.get("os"))
                 .macAddress((String) devices.get("macAddress"))
                 .type((String) devices.get("type"))
+                .id((String) devices.get("id"))
                 .build();
     }
 }

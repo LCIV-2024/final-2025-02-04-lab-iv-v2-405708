@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 public class EndpointDevices {
 
-        private Long id;
+        private String id;
 
         private String hostName;
 

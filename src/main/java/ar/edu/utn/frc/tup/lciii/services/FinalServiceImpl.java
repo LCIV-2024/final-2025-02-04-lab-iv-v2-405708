@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -47,6 +48,10 @@ public class FinalServiceImpl implements FinalService {
         finalTelemetry.setDataDate(telemetry.getDataDate());
 
         telemetryRepository.save(finalTelemetry);
+
+        device.setTelemetry(finalTelemetry);
+        deviceRepository.save(device);
+
         return telemetry;
     }
 
@@ -84,7 +89,9 @@ public class FinalServiceImpl implements FinalService {
                 }
             }
         }
-        else telemetryFilter = allTelemetries;
+        else {
+            telemetryFilter = allTelemetries;  // Aquí no debe haber problema, ya que 'telemetryFilter' ya es una lista.
+        }
 
 
 
@@ -133,29 +140,70 @@ public class FinalServiceImpl implements FinalService {
         }
 
         //TODO Consumo de telemetria
+        List<Device> allDevices = deviceRepository.findAll();
+        List<DeviceDTO> allDevicesDTO = new ArrayList<>();
+        for(Device device : allDevices) {
+            if(device.getTelemetry().getCpuUsage() >= min && device.getTelemetry().getCpuUsage() <= max) {
+                DeviceDTO deviceDTO = new DeviceDTO();
+                deviceDTO.setHostName(device.getHostName());
+                deviceDTO.setOs(device.getOs());
+                deviceDTO.setMacAddress(device.getMacAddress());
+                deviceDTO.setType(device.getType());
+                allDevicesDTO.add(deviceDTO);
+            }
+        }
 
-        return null;
+        return allDevicesDTO;
     }
 
     @Override
     public List<EndpointDevices> endpointInsert() {
-
         List<EndpointDevices> devices = restClient.getDevices();
 
-        Integer count = 0;
-        List<EndpointDevices> devicesss = new ArrayList<>();
-        for(EndpointDevices device: devices) {
-            Long randomNumber = Math.round(Math.random() * 1);
-            if(count > 5){
-                break;
-            }
-            if(randomNumber > 5){
-                devicesss.add(device);
-                count++;
-            }
-
+        if (devices.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        return devicesss;
+        // Calcular la cantidad de dispositivos a insertar (la mitad)
+        int devicesToInsert = devices.size() / 2;
+
+        // Mezclar aleatoriamente la lista para evitar siempre los mismos dispositivos
+        Collections.shuffle(devices);
+
+        // Seleccionar los primeros 'devicesToInsert' dispositivos después de mezclar
+        List<EndpointDevices> selectedDevices = devices.subList(0, devicesToInsert);
+
+        List<EndpointDevices> devicesToSave = new ArrayList<>();
+
+        for (EndpointDevices device : selectedDevices) {
+            EndpointDevices newDevice = new EndpointDevices();
+
+            // Copiar datos sin considerar el ID
+            newDevice.setHostName(device.getHostName()); // Ejemplo de campo
+            newDevice.setType(device.getType()); // Otro ejemplo
+            newDevice.setOs(device.getOs());
+            newDevice.setMacAddress(device.getMacAddress());
+
+            // Establecer la fecha actual como 'createdDate'
+            newDevice.setCreatedDate(LocalDateTime.now().toString());
+
+            devicesToSave.add(newDevice);
+        }
+
+        List<Device> deviceList = new ArrayList<>();
+        for (EndpointDevices device : devicesToSave) {
+            Device deviceToSave = new Device();
+            deviceToSave.setHostName(device.getHostName());
+            deviceToSave.setOs(device.getOs());
+            deviceToSave.setMacAddress(device.getMacAddress());
+            deviceToSave.setCreatedDate(LocalDateTime.now());
+            deviceList.add(deviceToSave);
+        }
+
+        // Insertar en la base de datos
+        deviceRepository.saveAll(deviceList);
+
+        return devicesToSave;
     }
+
 }
